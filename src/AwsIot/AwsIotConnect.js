@@ -1,38 +1,37 @@
-const { getAWSIotPublishTopic, getAWSIotSubscribeTopic } = require("../utils");
+const { getAWSIotPublishTopic } = require("../utils");
 const _ = require("lodash");
+const { PublishCommand } = require("@aws-sdk/client-iot-data-plane");
 
-const connectToAWSIOTCoreAndAddCallbacks = ({ device }) => {
-  const publishMessage = ({ payload }) => {
-    // const payload = [{
-    //   switchId: "SWITCH_6",
-    //   state: "ON",
-    // }];
-    _.forEach(payload, (switchInfo) => {
+const publishMessage = async ({ payload, client }) => {
+  // const payload = [{
+  //   switchId: "SWITCH_6",
+  //   state: "ON",
+  // }];
+  const promisArray = _.map(payload, async (switchInfo) => {
+    console.log(`publishing ${switchInfo.switchId}:${switchInfo.state} to IoT`);
+    const params = {
+      topic: getAWSIotPublishTopic(), // Replace with your IoT topic
+      payload: JSON.stringify(switchInfo),
+      qos: 0,
+    };
+
+    //https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/iot-data-plane/command/PublishCommand/
+    const command = new PublishCommand(params);
+    await client.send(command, (err) => {
+      if (err) {
+        console.error("Error publishing to IoT:", err);
+        throw new Error("Failed to control switch");
+      }
       console.log(
-        `publishing ${switchInfo.switchId}:${switchInfo.state} to IoT`
+        `published ${switchInfo.switchId}:${switchInfo.state} to IoT`
       );
-      const params = {
-        topic: getAWSIotPublishTopic(), // Replace with your IoT topic
-        payload: JSON.stringify(switchInfo),
-        qos: 0,
-      };
-      //https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/IotData.html#publish-property
-      device.publish(params, (err) => {
-        if (err) {
-          console.error("Error publishing to IoT:", err);
-          throw new Error("Failed to control switch");
-        }
-        console.log(
-          `published ${switchInfo.switchId}:${switchInfo.state} to IoT`
-        );
-        return true;
-      });
+      return true;
     });
-  };
+  });
 
-  return { publishMessage };
+  await Promise.all(promisArray);
 };
 
 module.exports = {
-  connectToAWSIOTCoreAndAddCallbacks,
+  publishMessage,
 };

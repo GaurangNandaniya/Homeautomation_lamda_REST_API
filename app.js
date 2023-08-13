@@ -5,22 +5,18 @@ const bodyParser = require("body-parser");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const _ = require("lodash");
-const AWS = require("aws-sdk");
+const { IoTDataPlaneClient } = require("@aws-sdk/client-iot-data-plane");
 
-const { HOST_URL, REGION } = require("./src/constants");
+const { REGION } = require("./src/constants");
 const { generateToken } = require("./src/utils");
-const {
-  connectToAWSIOTCoreAndAddCallbacks,
-} = require("./src/AwsIot/AwsIotConnect");
+const { publishMessage } = require("./src/AwsIot/AwsIotConnect");
 
 const { SECRET_KEY } = process.env;
 
 app.use(bodyParser.json());
 
-//https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/IotData.html
-const device = new AWS.IotData({ endpoint: HOST_URL, region: REGION });
-
-const { publishMessage } = connectToAWSIOTCoreAndAddCallbacks({ device });
+// https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/iot-data-plane/command/PublishCommand/
+const client = new IoTDataPlaneClient({ region: REGION });
 
 const users = [];
 // Sign-up endpoint
@@ -81,7 +77,7 @@ app.post("/login", async (req, res) => {
 });
 
 // Protected route (requires authentication)
-app.post("/switch", (req, res) => {
+app.post("/switch", async (req, res) => {
   try {
     const token = req.headers.authorization.split(" ")[1];
     const decoded = jwt.verify(token, SECRET_KEY);
@@ -92,7 +88,7 @@ app.post("/switch", (req, res) => {
       username: decoded.username,
       switchesStates,
     });
-    publishMessage({ payload: switchesStates });
+    await publishMessage({ payload: switchesStates, client });
 
     res.json({ message: "Successfully changed the state" });
   } catch (error) {
