@@ -1,6 +1,6 @@
 "use strict";
 
-const app = require("./index");
+const app = require("./app");
 const serverless = require("serverless-http");
 
 module.exports.restApiHandler = serverless(app);
