@@ -1,10 +1,12 @@
 {
-  "name": "homeautomation_lamda_rest_api",
+  "name": "homeautomation-lamda-rest-api",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "deploy":"serverless deploy"
   },
   "repository": {
     "type": "git",
@@ -22,6 +24,7 @@
     "body-parser": "^1.20.2",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.1",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "serverless-http": "^3.2.0"
   }
 }
