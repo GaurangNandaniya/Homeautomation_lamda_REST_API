@@ -4,14 +4,20 @@ const express = require("express");
 const app = express();
 const AWSIoT = require("aws-iot-device-sdk");
 const bodyParser = require("body-parser");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+
 const {
   HOST_URL,
   CLIENT_ID,
   CA_FILE_PATH,
   CERTIFICATE_FILE_PATH,
   PRIVATE_KEY_FILE_PATH,
+  PORT,
+  SECRET_KEY,
 } = require("./constants");
-const { getAWSIotPublishTopic, getAWSIotSubscribeTopic } = require("./utils");
+const { generateToken } = require("./utils");
+const { connectToAWSIOTCoreAndAddCallbacks } = require("./AwsIotConnect");
 
 app.use(bodyParser.json());
 
@@ -30,46 +36,78 @@ const device = AWSIoT.device({
   host: HOST_URL,
 });
 
-//
-// Device is an instance returned by mqtt.Client(), see mqtt.js for full
-// documentation.
-//
+const { publishMessage } = connectToAWSIOTCoreAndAddCallbacks({ device });
 
-// const payload = {
-//   switchId: "SWITCH_6",
-//   state: "ON",
-// };
+const users = [];
+// Sign-up endpoint
+app.post("/signup", async (req, res) => {
+  try {
+    const { username, password } = req.body;
 
-// console.log("connect");
-device.on("connect", function () {
-  console.log("Server connected to IOT");
-  device.subscribe(getAWSIotSubscribeTopic());
-});
-
-// console.log("message");
-device.on("message", function (topic, payload) {
-  console.log("message", topic, payload.toString());
-});
-
-device.on("error", function (topic, payload) {
-  console.log("error", topic, payload.toString());
-});
-
-const publishMessage = ({ message, res }) => {
-  device.publish(getAWSIotPublishTopic(), JSON.stringify(message), (err) => {
-    if (err) {
-      console.error("Error publishing to IoT:", err);
-      return res.status(500).json({ error: "Failed to control switch" });
+    // Check if user already exists
+    const existingUser = users.find((user) => user.username === username);
+    if (existingUser) {
+      return res.status(400).json({ error: "User already exists" });
     }
 
-    return res.json({ message: `${message.switchId} turned ${message.state}` });
-  });
-};
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-app.post("/switch", (req, res) => {
-  return publishMessage({ message: req.body, res });
+    // Create a new user
+    const newUser = {
+      username,
+      password: hashedPassword,
+    };
+    users.push(newUser);
+
+    res.json({ message: "User registered successfully" });
+  } catch (error) {
+    console.error("Error during sign-up:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
-app.listen(3000, () => {
-  console.log("Server is running on port 3000");
+// Login endpoint
+app.post("/login", async (req, res) => {
+  try {
+    const { username, password } = req.body;
+
+    // Find the user by username
+    const user = users.find((user) => user.username === username);
+    if (!user) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
+
+    // Compare passwords
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
+
+    // Generate a JWT token
+    const token = generateToken({ username });
+
+    res.json({ token });
+  } catch (error) {
+    console.error("Error during login:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Protected route (requires authentication)
+app.post("/switch", (req, res) => {
+  try {
+    const token = req.headers.authorization.split(" ")[1];
+    const decoded = jwt.verify(token, SECRET_KEY);
+    const { switchesStates } = req.body;
+    publishMessage({ payload: switchesStates });
+    res.json({ message: "Protected data accessed", user: decoded.username });
+  } catch (error) {
+    console.error("Error in protected route:", error);
+    res.status(401).json({ error: "Unauthorized" });
+  }
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
