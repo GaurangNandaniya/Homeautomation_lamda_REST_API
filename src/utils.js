@@ -11,7 +11,7 @@ const getAWSIotSubscribeTopic = () => {
 
 // Generate JWT token with 1 year expiration
 function generateToken({ username }) {
-  return jwt.sign({ username }, SECRET_KEY, { expiresIn: "1y" });
+  return jwt.sign({ username }, SECRET_KEY, { expiresIn: 120 });
 }
 
 module.exports = {

@@ -1,4 +1,4 @@
-const { getAWSIotPublishTopic, getAWSIotSubscribeTopic } = require("./utils");
+const { getAWSIotPublishTopic, getAWSIotSubscribeTopic } = require("../utils");
 
 const connectToAWSIOTCoreAndAddCallbacks = ({ device }) => {
   device.on("connect", function () {

@@ -6,6 +6,7 @@ const AWSIoT = require("aws-iot-device-sdk");
 const bodyParser = require("body-parser");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const _ = require("lodash");
 
 const {
   HOST_URL,
@@ -15,9 +16,11 @@ const {
   PRIVATE_KEY_FILE_PATH,
   PORT,
   SECRET_KEY,
-} = require("./constants");
-const { generateToken } = require("./utils");
-const { connectToAWSIOTCoreAndAddCallbacks } = require("./AwsIotConnect");
+} = require("./src/constants");
+const { generateToken } = require("./src/utils");
+const {
+  connectToAWSIOTCoreAndAddCallbacks,
+} = require("./src/AwsIot/AwsIotConnect");
 
 app.use(bodyParser.json());
 
@@ -42,7 +45,8 @@ const users = [];
 // Sign-up endpoint
 app.post("/signup", async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { userDetails } = req.body;
+    const { username, password } = userDetails;
 
     // Check if user already exists
     const existingUser = users.find((user) => user.username === username);
@@ -100,12 +104,22 @@ app.post("/switch", (req, res) => {
   try {
     const token = req.headers.authorization.split(" ")[1];
     const decoded = jwt.verify(token, SECRET_KEY);
+
     const { switchesStates } = req.body;
     publishMessage({ payload: switchesStates });
-    res.json({ message: "Protected data accessed", user: decoded.username });
+
+    res.json({ message: "Successfully changed the state" });
   } catch (error) {
-    console.error("Error in protected route:", error);
-    res.status(401).json({ error: "Unauthorized" });
+    if (_.includes(error, "invalid signature")) {
+      console.error("Error in jwt", error);
+      return res.status(401).json({ error: "Unauthorized" });
+    } else if (_.includes(error, "jwt expired")) {
+      console.error("Error in jwt", error);
+      return res.status(402).json({ error: "jwt expire login again" });
+    }
+
+    console.error("Error in switch state change:", error);
+    res.status(501).json({ error: "Server error couldn't do action" });
   }
 });
 
