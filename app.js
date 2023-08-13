@@ -99,12 +99,12 @@ app.post("/switch", (req, res) => {
     const decoded = jwt.verify(token, SECRET_KEY);
 
     const { switchesStates } = req.body;
-    publishMessage({ payload: switchesStates });
 
     console.log({
-      user: decoded,
+      username: decoded.username,
       switchesStates,
     });
+    publishMessage({ payload: switchesStates });
 
     res.json({ message: "Successfully changed the state" });
   } catch (error) {
