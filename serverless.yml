@@ -7,7 +7,7 @@ useDotenv: true
 provider:
   name: aws
   runtime: nodejs18.x
-  memorySize: 2048
+  memorySize: 512
   stage: staging
   timeout: 15
   region: ap-south-1

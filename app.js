@@ -1,20 +1,13 @@
 require("dotenv").config(); // Load environment variables from .env file
 const express = require("express");
 const app = express();
-const AWSIoT = require("aws-iot-device-sdk");
 const bodyParser = require("body-parser");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const _ = require("lodash");
+const AWS = require("aws-sdk");
 
-const {
-  HOST_URL,
-  CLIENT_ID,
-  CA_FILE_PATH,
-  CERTIFICATE_FILE_PATH,
-  PRIVATE_KEY_FILE_PATH,
-  PORT,
-} = require("./src/constants");
+const { HOST_URL, REGION } = require("./src/constants");
 const { generateToken } = require("./src/utils");
 const {
   connectToAWSIOTCoreAndAddCallbacks,
@@ -24,13 +17,8 @@ const { SECRET_KEY } = process.env;
 
 app.use(bodyParser.json());
 
-const device = AWSIoT.device({
-  keyPath: PRIVATE_KEY_FILE_PATH,
-  certPath: CERTIFICATE_FILE_PATH,
-  caPath: CA_FILE_PATH,
-  clientId: CLIENT_ID,
-  host: HOST_URL,
-});
+//https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/IotData.html
+const device = new AWS.IotData({ endpoint: HOST_URL, region: REGION });
 
 const { publishMessage } = connectToAWSIOTCoreAndAddCallbacks({ device });
 
