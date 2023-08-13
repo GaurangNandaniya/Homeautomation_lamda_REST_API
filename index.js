@@ -70,7 +70,8 @@ app.post("/signup", async (req, res) => {
 // Login endpoint
 app.post("/login", async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { userDetails } = req.body;
+    const { username, password } = userDetails;
 
     // Find the user by username
     const user = users.find((user) => user.username === username);
