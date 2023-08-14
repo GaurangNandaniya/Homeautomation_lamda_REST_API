@@ -17,16 +17,17 @@ const publishMessage = async ({ payload, client }) => {
 
     //https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/iot-data-plane/command/PublishCommand/
     const command = new PublishCommand(params);
-    await client.send(command, (err) => {
-      if (err) {
-        console.error("Error publishing to IoT:", err);
-        throw new Error("Failed to control switch");
-      }
+    console.log(command);
+    try {
+      await client.send(command);
       console.log(
         `published ${switchInfo.switchId}:${switchInfo.state} to IoT`
       );
       return true;
-    });
+    } catch (err) {
+      console.error("Error publishing to IoT:", err);
+      throw new Error("Failed to control switch");
+    }
   });
 
   await Promise.all(promisArray);

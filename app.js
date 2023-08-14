@@ -16,7 +16,10 @@ const { SECRET_KEY } = process.env;
 app.use(bodyParser.json());
 
 // https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/iot-data-plane/command/PublishCommand/
-const client = new IoTDataPlaneClient({ region: REGION });
+const client = new IoTDataPlaneClient({
+  region: REGION,
+});
+console.log(client);
 
 const users = [];
 // Sign-up endpoint

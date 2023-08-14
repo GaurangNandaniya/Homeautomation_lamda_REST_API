@@ -2,8 +2,9 @@ service: homeautomation-lamda-rest-api
 
 frameworkVersion: "3"
 
-#https://www.serverless.com/plugins/serverless-dotenv-plugin
+# https://www.serverless.com/plugins/serverless-dotenv-plugin
 useDotenv: true
+
 provider:
   name: aws
   runtime: nodejs18.x
@@ -11,6 +12,38 @@ provider:
   stage: staging
   timeout: 15
   region: ap-south-1
+
+resources:
+  Resources:
+    MyLambdaExecutionRole:
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: MyLambdaExecutionRole
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service: lambda.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          - PolicyName: MyLambdaPolicy
+            PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - iot:Connect
+                    - iot:Publish
+                    - iot:Subscribe
+                    - iot:Receive
+                  Resource: "*"
+                - Effect: Allow
+                  Action:
+                    - logs:CreateLogGroup
+                    - logs:CreateLogStream
+                    - logs:PutLogEvents
+                  Resource: arn:aws:logs:*:*:*
 
 functions:
   restApiHandler:
@@ -20,3 +53,4 @@ functions:
       - http: ANY /
     environment:
       SECRET_KEY: ${env:SECRET_KEY}
+    role: MyLambdaExecutionRole # Reference the IAM role here
