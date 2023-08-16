@@ -6,7 +6,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
-    "deploy": "serverless deploy"
+    "deploy": "serverless deploy",
+    "migration":"npx knex migrate:latest",
+    "rollback":"npx knex migrate:rollback",
+    "seeds":"npx knex seed:run"
   },
   "repository": {
     "type": "git",
@@ -25,7 +28,9 @@
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.1",
+    "knex": "^2.5.1",
     "lodash": "^4.17.21",
+    "pg": "^8.11.2",
     "serverless-http": "^3.2.0"
   }
 }

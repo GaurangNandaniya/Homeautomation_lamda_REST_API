@@ -5,44 +5,31 @@ const bodyParser = require("body-parser");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const _ = require("lodash");
-const { IoTDataPlaneClient } = require("@aws-sdk/client-iot-data-plane");
-
-const { REGION } = require("./src/constants");
 const { generateToken } = require("./src/utils");
-const { publishMessage } = require("./src/AwsIot/AwsIotConnect");
 
 const { SECRET_KEY } = process.env;
 
 app.use(bodyParser.json());
 
-// https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/iot-data-plane/command/PublishCommand/
-const client = new IoTDataPlaneClient({
-  region: REGION,
-});
-console.log(client);
-
-const users = [];
 // Sign-up endpoint
 app.post("/signup", async (req, res) => {
   try {
     const { userDetails } = req.body;
     const { username, password } = userDetails;
 
-    // Check if user already exists
-    const existingUser = users.find((user) => user.username === username);
-    if (existingUser) {
-      return res.status(400).json({ error: "User already exists" });
-    }
+    // if (existingUser) {
+    //   return res.status(400).json({ error: "User already exists" });
+    // }
 
-    // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // // Hash the password
+    // const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create a new user
-    const newUser = {
-      username,
-      password: hashedPassword,
-    };
-    users.push(newUser);
+    // // Create a new user
+    // const newUser = {
+    //   username,
+    //   password: hashedPassword,
+    // };
+    // users.push(newUser);
 
     res.json({ message: "User registered successfully" });
   } catch (error) {
@@ -57,20 +44,20 @@ app.post("/login", async (req, res) => {
     const { userDetails } = req.body;
     const { username, password } = userDetails;
 
-    // Find the user by username
-    const user = users.find((user) => user.username === username);
-    if (!user) {
-      return res.status(401).json({ error: "Invalid credentials" });
-    }
+    // // Find the user by username
+    // const user = users.find((user) => user.username === username);
+    // if (!user) {
+    //   return res.status(401).json({ error: "Invalid credentials" });
+    // }
 
-    // Compare passwords
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      return res.status(401).json({ error: "Invalid credentials" });
-    }
+    // // Compare passwords
+    // const isPasswordValid = await bcrypt.compare(password, user.password);
+    // if (!isPasswordValid) {
+    //   return res.status(401).json({ error: "Invalid credentials" });
+    // }
 
-    // Generate a JWT token
-    const token = generateToken({ username });
+    // // Generate a JWT token
+    // const token = generateToken({ username });
 
     res.json({ token });
   } catch (error) {
@@ -91,7 +78,7 @@ app.post("/switch", async (req, res) => {
       username: decoded.username,
       switchesStates,
     });
-    await publishMessage({ payload: switchesStates, client });
+    // await publishMessage({ payload: switchesStates, client: ioTClient });
 
     res.json({ message: "Successfully changed the state" });
   } catch (error) {

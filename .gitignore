@@ -6,3 +6,4 @@ jspm_packages
 .serverless
 .git
 .env
+test-api.http
