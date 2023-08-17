@@ -1,4 +1,4 @@
-const { getAWSIotPublishTopic } = require("../utils");
+const { getAWSIotPublishTopic } = require("../utils/awsIotUtils");
 const _ = require("lodash");
 const { PublishCommand } = require("@aws-sdk/client-iot-data-plane");
 
