@@ -5,6 +5,9 @@ frameworkVersion: "3"
 # https://www.serverless.com/plugins/serverless-dotenv-plugin
 useDotenv: true
 
+plugins:
+  - serverless-offline
+
 provider:
   name: aws
   runtime: nodejs18.x

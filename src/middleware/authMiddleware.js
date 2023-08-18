@@ -1,6 +1,6 @@
-// src/middleware/authMiddleware.js
+require("dotenv").config(); // Load environment variables from .env file
 const jwt = require("jsonwebtoken");
-const { SECRET_KEY } = process.env;
+const { SECRET_KEY, ADMIN_USERS } = process.env;
 const { getUserByEmail } = require("../controllers/userController");
 
 function validateUser(req, res, next) {
@@ -20,7 +20,11 @@ async function authenticateUser(req, res, next) {
   try {
     const decoded = jwt.verify(token, SECRET_KEY);
     const user = await getUserByEmail(decoded.email);
-    if (!user) {
+
+    if (
+      !user &&
+      !_.includes(JSON.parse(process.env.ADMIN_USERS), decoded.email)
+    ) {
       return res.status(401).json({ error: "Unauthorized" });
     }
 

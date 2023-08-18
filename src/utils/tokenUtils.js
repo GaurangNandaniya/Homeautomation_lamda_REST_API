@@ -1,3 +1,4 @@
+require("dotenv").config(); // Load environment variables from .env file
 const jwt = require("jsonwebtoken");
 
 // Generate JWT token with 1 year expiration

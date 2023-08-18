@@ -5,11 +5,11 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js",
+    "start": "npx serverless offline",
     "deploy": "serverless deploy",
-    "migration":"npx knex migrate:latest",
-    "rollback":"npx knex migrate:rollback",
-    "seeds":"npx knex seed:run"
+    "migration": "npx knex migrate:latest",
+    "rollback": "npx knex migrate:rollback",
+    "seeds": "npx knex seed:run"
   },
   "repository": {
     "type": "git",
@@ -32,5 +32,8 @@
     "lodash": "^4.17.21",
     "pg": "^8.11.2",
     "serverless-http": "^3.2.0"
+  },
+  "devDependencies": {
+    "serverless-offline": "^12.0.4"
   }
 }
