@@ -30,6 +30,7 @@ const updateUser = async (data) => {
     .update({
       first_name: firstName,
       last_name: lastName,
+      updated_at: db.fn.now(),
     })
     .returning("*");
 
