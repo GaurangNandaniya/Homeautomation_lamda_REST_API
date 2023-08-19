@@ -41,11 +41,11 @@ const updateSwitch = async (data) => {
   return _.first(result);
 };
 
-const deleteRoom = async (data) => {
-  const { jwtUser, roomDetails } = data;
-  const { id } = roomDetails;
+const deleteSwitch = async (data) => {
+  const { jwtUser, switchDetails } = data;
+  const { id } = switchDetails;
 
-  const result = await db("room")
+  const result = await db("switch")
     .where("id", id)
     .where("is_deleted", false)
     .update({
@@ -57,45 +57,74 @@ const deleteRoom = async (data) => {
   return result;
 };
 
-const restoreRoomModal = async (data) => {
-  const { jwtUser, roomDetails } = data;
-  const { id, name, address } = roomDetails;
+const restoreSwichModal = async (data) => {
+  const { jwtUser, switchDetails } = data;
+  const { id } = switchDetails;
   const { userId } = jwtUser;
 
-  const result = await db("room")
+  const result = await db("switch")
     .where("id", id)
     .where("is_deleted", true)
     .update({
       is_deleted: false,
     })
     .returning("*");
+  console.log(result);
+  return result;
+};
+
+const fetchSwitchesByRoomId = async (data) => {
+  const { jwtUser, switchDetails } = data;
+  const { roomId } = switchDetails;
+  const { userId } = jwtUser;
+
+  const result = await db("switch as s")
+    .select("s.id", "s.name", "s.type", "s.state", "s.power_value_percentage")
+    .where({
+      "s.is_deleted": false,
+      "s.fk_room_id": roomId,
+    });
+  // .orderBy("s.created_at", "ASC");
 
   return result;
 };
 
-const fetchRoomByHomeId = async (data) => {
-  const { jwtUser, roomDetails } = data;
-  const { homeId } = roomDetails;
+const fetchSwitchHardwareDetailsBySwitchId = async (data) => {
+  const { jwtUser, switchDetails } = data;
+  const { id } = switchDetails;
   const { userId } = jwtUser;
 
-  const result = await db("room as r")
-    .select("r.id", "r.name", db.raw("COUNT(s.id) as switch_count"))
-    .leftJoin("switch as s", function () {
-      this.on("s.fk_room_id", "r.id").on("s.is_deleted", db.raw("?", [false]));
+  const result = await db("switch as s")
+    .select("s.id", "s.state", "sh.switch_acronym", "sh.fk_microcontroller_id")
+    .innerJoin("switch_hardware as sh", "sh.serial_id", "s.switch_serial_id")
+    .where({ "s.is_deleted": false, id })
+    .first();
+  return result;
+};
+
+const updateSwitchStateInDb = async (data) => {
+  const { jwtUser, switchDetails } = data;
+  const { id, state } = switchDetails;
+
+  const result = await db("switch")
+    .update({
+      state,
     })
     .where({
-      "r.is_deleted": false,
-      "r.fk_home_id": homeId,
+      id,
+      is_deleted: false,
     })
-    .groupBy("r.id");
+    .returning("*");
 
-  return result;
+  return _.first(result);
 };
 
 module.exports = {
   createSwitches,
   updateSwitch,
-  deleteRoom,
-  restoreRoomModal,
-  fetchRoomByHomeId,
+  deleteSwitch,
+  restoreSwichModal,
+  fetchSwitchesByRoomId,
+  fetchSwitchHardwareDetailsBySwitchId,
+  updateSwitchStateInDb,
 };

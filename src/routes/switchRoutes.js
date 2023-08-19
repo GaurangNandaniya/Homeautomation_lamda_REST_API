@@ -2,10 +2,11 @@ const express = require("express");
 const { authenticateUser } = require("../middleware/authMiddleware");
 const {
   createNewSwitches,
-  removeRoom,
+  removeSwitch,
   updateSwitchDetails,
-  restoreRoom,
-  getRoomByHomeId,
+  restoreSwitch,
+  getSwitchesByRoomId,
+  updateSwitchState,
 } = require("../controllers/switchController");
 
 const router = express.Router();
@@ -43,11 +44,11 @@ router.post("/remove", authenticateUser, async (req, res) => {
     const { switchDetails } = req.body;
     const jwtUser = res.locals.jwtUser;
 
-    await removeRoom({ jwtUser, switchDetails });
+    await removeSwitch({ jwtUser, switchDetails });
 
     res.json({ success: true });
   } catch (error) {
-    console.error("Error remove room:", error);
+    console.error("Error remove switch:", error);
     res.status(500).json({ success: false, error: "Internal server error" });
   }
 });
@@ -57,21 +58,35 @@ router.post("/restore", authenticateUser, async (req, res) => {
     const { switchDetails } = req.body;
     const jwtUser = res.locals.jwtUser;
 
-    await restoreRoom({ jwtUser, switchDetails });
+    await restoreSwitch({ jwtUser, switchDetails });
 
     res.json({ success: true });
   } catch (error) {
-    console.error("Error restore room:", error);
+    console.error("Error restore switch:", error);
     res.status(500).json({ success: false, error: "Internal server error" });
   }
 });
 
-router.post("/homeRooms", authenticateUser, async (req, res) => {
+router.post("/roomSwitches", authenticateUser, async (req, res) => {
   try {
     const jwtUser = res.locals.jwtUser;
     const { switchDetails } = req.body;
 
-    const data = await getRoomByHomeId({ jwtUser, switchDetails });
+    const data = await getSwitchesByRoomId({ jwtUser, switchDetails });
+
+    res.json({ success: true, data });
+  } catch (error) {
+    console.error("Error home rooms:", error);
+    res.status(500).json({ success: false, error: "Internal server error" });
+  }
+});
+
+router.post("/state", authenticateUser, async (req, res) => {
+  try {
+    const jwtUser = res.locals.jwtUser;
+    const { switchDetails } = req.body;
+
+    const data = (await updateSwitchState({ jwtUser, switchDetails })) || {};
 
     res.json({ success: true, data });
   } catch (error) {

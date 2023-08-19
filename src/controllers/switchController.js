@@ -1,13 +1,19 @@
 const {
   createSwitches,
   updateSwitch,
-  deleteRoom,
-  restoreRoomModal,
-  fetchRoomByHomeId,
+  deleteSwitch,
+  restoreSwichModal,
+  fetchSwitchesByRoomId,
+  fetchSwitchHardwareDetailsBySwitchId,
+  updateSwitchStateInDb,
 } = require("../models/Switch");
+const { publishMessage } = require("../controllers/awsIotController");
 const {
   getSwitchesByMicrocontrollerId,
 } = require("../controllers/switchHardwareController");
+const {
+  addSwitchStateUpdateLog,
+} = require("../controllers/switchStateLogController");
 
 const switchProperties = [
   "name",
@@ -40,22 +46,40 @@ const updateSwitchDetails = async (data) => {
   return _.pick(result || {}, switchProperties);
 };
 
-const removeRoom = async (data) => {
-  return await deleteRoom(data);
+const removeSwitch = async (data) => {
+  return await deleteSwitch(data);
 };
 
-const restoreRoom = async (data) => {
-  return await restoreRoomModal(data);
+const restoreSwitch = async (data) => {
+  return await restoreSwichModal(data);
 };
 
-const getRoomByHomeId = async (data) => {
-  return await fetchRoomByHomeId(data);
+const getSwitchesByRoomId = async (data) => {
+  return await fetchSwitchesByRoomId(data);
+};
+
+const updateSwitchState = async (data) => {
+  const { switchDetails } = data;
+  const { state } = switchDetails;
+
+  const switchHardwareInfo = await fetchSwitchHardwareDetailsBySwitchId(data);
+  const { switch_acronym, fk_microcontroller_id } = switchHardwareInfo;
+
+  await publishMessage({
+    switchLocalId: switch_acronym,
+    microcontrollerId: fk_microcontroller_id,
+    state,
+  });
+
+  await updateSwitchStateInDb(data);
+  await addSwitchStateUpdateLog(data);
 };
 
 module.exports = {
   createNewSwitches,
-  removeRoom,
+  removeSwitch,
   updateSwitchDetails,
-  restoreRoom,
-  getRoomByHomeId,
+  restoreSwitch,
+  getSwitchesByRoomId,
+  updateSwitchState,
 };

@@ -50,7 +50,7 @@ const deleteRoom = async (data) => {
 
 const restoreRoomModal = async (data) => {
   const { jwtUser, roomDetails } = data;
-  const { id, name, address } = roomDetails;
+  const { id } = roomDetails;
   const { userId } = jwtUser;
 
   const result = await db("room")
