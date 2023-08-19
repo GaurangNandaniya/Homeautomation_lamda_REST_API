@@ -1,9 +1,9 @@
-const getAWSIotPublishTopic = () => {
-  return "devices/switch/switch1/sub";
+const getAWSIotPublishTopic = ({ microcontrollerId }) => {
+  return `devices/microcontroller/${microcontrollerId}/sub`;
 };
 
 const getAWSIotSubscribeTopic = () => {
-  return "devices/switch/+/pub";
+  return "devices/microcontroller/+/pub";
 };
 
 module.exports = {

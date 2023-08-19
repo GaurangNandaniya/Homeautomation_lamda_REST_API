@@ -12,7 +12,7 @@ const publishMessage = async ({ switchLocalId, microcontrollerId, state }) => {
     switchId: switchLocalId,
   };
   const params = {
-    topic: getAWSIotPublishTopic(),
+    topic: getAWSIotPublishTopic({ microcontrollerId }),
     payload: JSON.stringify(switchInfo),
     qos: 0,
   };
