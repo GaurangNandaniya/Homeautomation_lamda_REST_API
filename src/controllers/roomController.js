@@ -6,14 +6,16 @@ const {
   fetchRoomByHomeId,
 } = require("../models/Room");
 
+const roomProperties = ["name", "id"];
+
 const createNewRoom = async (data) => {
   const result = await createRoom(data);
-  return _.pick(result || {}, ["name", "id"]);
+  return _.pick(result || {}, roomProperties);
 };
 
 const updateRoomDetails = async (data) => {
   const result = await updateRoom(data);
-  return _.pick(result || {}, ["name", "id"]);
+  return _.pick(result || {}, roomProperties);
 };
 
 const removeRoom = async (data) => {

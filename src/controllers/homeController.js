@@ -6,14 +6,16 @@ const {
   fetchHomeByUserId,
 } = require("../models/Home");
 
+const homeProperties = ["name", "id", "address"];
+
 const createNewHome = async (data) => {
   const result = await createHome(data);
-  return _.pick(result || {}, ["name", "id", "address"]);
+  return _.pick(result || {}, homeProperties);
 };
 
 const updateHomeDetails = async (data) => {
   const result = await updateHome(data);
-  return _.pick(result || {}, ["name", "id", "address"]);
+  return _.pick(result || {}, homeProperties);
 };
 
 const removeHome = async (data) => {

@@ -50,10 +50,10 @@ router.post("/login", validateUser, async (req, res) => {
 
     const token = generateToken({ email, userId: user.user_id });
 
-    res.json({ token });
+    res.json({ success: true, token });
   } catch (error) {
     console.error("Error during login:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ success: false, error: "Internal server error" });
   }
 });
 
