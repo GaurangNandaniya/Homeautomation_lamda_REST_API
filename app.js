@@ -8,6 +8,7 @@ const { db } = require("./src/clients/KnexClient");
 //routes
 const authRoutes = require("./src/routes/authRoutes");
 const userRoutes = require("./src/routes/userRoutes");
+const homeRoutes = require("./src/routes/homeRoutes");
 
 //it will make available db to all files without importing
 global.db = db;
@@ -17,5 +18,6 @@ app.use(bodyParser.json());
 
 app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
+app.use("/home", homeRoutes);
 
 module.exports = app;

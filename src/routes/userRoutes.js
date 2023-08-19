@@ -18,10 +18,10 @@ router.post("/update", authenticateUser, async (req, res) => {
       lastName,
       userId,
     });
-    res.json({ message: "User info updated successfully" });
+    res.json({ success: true, message: "User info updated successfully" });
   } catch (error) {
     console.error("Error in user route:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ success: false, error: "Internal server error" });
   }
 });
 
@@ -33,10 +33,10 @@ router.post("/remove", authenticateUser, async (req, res) => {
     await removeUser({
       userId,
     });
-    res.json({ message: "User deleted successfully" });
+    res.json({ success: true, message: "User deleted successfully" });
   } catch (error) {
     console.error("Error in user route:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ success: false, error: "Internal server error" });
   }
 });
 
@@ -48,10 +48,10 @@ router.post("/restore", authenticateUser, async (req, res) => {
     await restoreUser({
       userId,
     });
-    res.json({ message: "User deleted successfully" });
+    res.json({ success: true, message: "User deleted successfully" });
   } catch (error) {
     console.error("Error in user route:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ success: false, error: "Internal server error" });
   }
 });
 

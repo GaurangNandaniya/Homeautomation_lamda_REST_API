@@ -7,6 +7,8 @@ async function createUser(newUser) {
       password,
       first_name: firstName,
       last_name: lastName,
+      updated_at: db.fn.now(),
+      created_at: db.fn.now(),
     })
     .returning("*");
   console.log(result);

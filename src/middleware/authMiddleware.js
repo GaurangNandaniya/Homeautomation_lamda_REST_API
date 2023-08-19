@@ -28,7 +28,8 @@ async function authenticateUser(req, res, next) {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
-    req.user = user;
+    //https://bobbyhadz.com/blog/pass-variables-to-the-next-middleware-in-express-js
+    res.locals.jwtUser = decoded;
     next();
   } catch (error) {
     if (error.name === "JsonWebTokenError") {

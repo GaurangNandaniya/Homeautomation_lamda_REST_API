@@ -56,4 +56,9 @@ functions:
       - http: ANY /
     environment:
       SECRET_KEY: ${env:SECRET_KEY}
+      POSTGRESQL_DB_HOST: ${env:POSTGRESQL_DB_HOST}
+      POSTGRESQL_DB_USER: ${env:POSTGRESQL_DB_USER}
+      POSTGRESQL_DB_PASSWORD: ${env:POSTGRESQL_DB_PASSWORD}
+      POSTGRESQL_DB: ${env:POSTGRESQL_DB}
+      ADMIN_USERS: ${env:ADMIN_USERS}
     role: MyLambdaExecutionRole # Reference the IAM role here

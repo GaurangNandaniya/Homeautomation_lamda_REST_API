@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npx serverless offline",
+    "start": "npx serverless offline start --reloadHandler",
     "deploy": "serverless deploy",
     "migration": "npx knex migrate:latest",
     "rollback": "npx knex migrate:rollback",
