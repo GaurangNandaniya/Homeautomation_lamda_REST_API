@@ -23,12 +23,12 @@ const updateHome = async (data) => {
 
   const result = await db("home")
     .update({
-      id,
       name,
       address,
       updated_at: db.fn.now(),
     })
     .where({
+      id,
       fk_user_id: userId,
       is_deleted: false,
     })
