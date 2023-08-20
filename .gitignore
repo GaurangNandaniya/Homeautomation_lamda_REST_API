@@ -7,3 +7,4 @@ jspm_packages
 .git
 .env
 test-api.http
+ap-south-1-bundle.pem

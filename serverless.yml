@@ -13,7 +13,7 @@ provider:
   runtime: nodejs18.x
   memorySize: 512
   stage: staging
-  timeout: 15
+  timeout: 30
   region: ap-south-1
 
 resources:
@@ -47,6 +47,14 @@ resources:
                     - logs:CreateLogStream
                     - logs:PutLogEvents
                   Resource: arn:aws:logs:*:*:*
+                - Effect: Allow
+                  Action:
+                    - ec2:DescribeNetworkInterfaces
+                    - ec2:CreateNetworkInterface
+                    - ec2:DeleteNetworkInterface
+                    - ec2:DescribeInstances
+                    - ec2:AttachNetworkInterface
+                  Resource: "*"
 
 functions:
   restApiHandler:
@@ -62,3 +70,9 @@ functions:
       POSTGRESQL_DB: ${env:POSTGRESQL_DB}
       ADMIN_USERS: ${env:ADMIN_USERS}
     role: MyLambdaExecutionRole # Reference the IAM role here
+    vpc:
+      securityGroupIds:
+        - ${env:VPC_SECURITY_GROUP_ID}
+      subnetIds:
+        - ${env:SUBNET_ID_1}
+        - ${env:SUBNET_ID_2}

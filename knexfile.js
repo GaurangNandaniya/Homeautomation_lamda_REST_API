@@ -1,5 +1,4 @@
 require("dotenv").config(); // Load environment variables from .env file
-const fs = require("fs");
 
 const {
   POSTGRESQL_DB_HOST,
@@ -7,6 +6,7 @@ const {
   POSTGRESQL_DB_PASSWORD,
   POSTGRESQL_DB,
 } = process.env;
+const { POSTGRESQL_DB_SSL } = require("./src/constants/KnexConstants");
 
 module.exports = {
   development: {
@@ -18,7 +18,7 @@ module.exports = {
       password: POSTGRESQL_DB_PASSWORD,
       port: 5432, // Default PostgreSQL port,
       ssl: {
-        ca: fs.readFileSync("../Certificates/ap-south-1-bundle.pem").toString(),
+        ca: POSTGRESQL_DB_SSL,
       },
     },
     migrations: {

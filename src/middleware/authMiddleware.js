@@ -28,7 +28,8 @@ async function authenticateUser(req, res, next) {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
-    console.log(decoded, req.originalUrl);
+    console.log(decoded);
+    console.log({ apiRoute: req.originalUrl });
     //https://bobbyhadz.com/blog/pass-variables-to-the-next-middleware-in-express-js
     res.locals.jwtUser = decoded;
     next();

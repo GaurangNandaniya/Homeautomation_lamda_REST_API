@@ -4,7 +4,7 @@ const { PublishCommand } = require("@aws-sdk/client-iot-data-plane");
 
 const publishMessage = async ({ switchLocalId, microcontrollerId, state }) => {
   console.log(
-    `publishing ${switchLocalId}:${state} of microcontroller:${microcontrollerId}to IoT`
+    `publishing ${switchLocalId}:${state} of microcontroller: ${microcontrollerId}to IoT`
   );
 
   const switchInfo = {
@@ -23,7 +23,7 @@ const publishMessage = async ({ switchLocalId, microcontrollerId, state }) => {
   try {
     await ioTClient.send(command);
     console.log(
-      `published ${switchInfo.switchId}:${switchInfo.state} of microcontroller:${microcontrollerId} to IoT`
+      `published ${switchInfo.switchId}:${switchInfo.state} of microcontroller: ${microcontrollerId} to IoT`
     );
     return true;
   } catch (err) {

@@ -61,18 +61,26 @@ const getSwitchesByRoomId = async (data) => {
 const updateSwitchState = async (data) => {
   const { switchDetails } = data;
   const { state } = switchDetails;
-
+  console.time("switchHardwareInfo");
   const switchHardwareInfo = await fetchSwitchHardwareDetailsBySwitchId(data);
   const { switch_acronym, fk_microcontroller_id } = switchHardwareInfo;
+  console.timeEnd("switchHardwareInfo");
 
+  console.time("publishMessage");
   await publishMessage({
     switchLocalId: switch_acronym,
     microcontrollerId: fk_microcontroller_id,
     state,
   });
+  console.timeEnd("publishMessage");
 
-  await updateSwitchStateInDb(data);
-  await addSwitchStateUpdateLog(data);
+  console.time("promise");
+  const promise = [];
+  promise.push(updateSwitchStateInDb(data));
+  promise.push(addSwitchStateUpdateLog(data));
+
+  await Promise.all(promise);
+  console.timeEnd("promise");
 };
 
 module.exports = {
