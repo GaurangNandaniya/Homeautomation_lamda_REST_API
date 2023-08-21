@@ -11,9 +11,9 @@ plugins:
 provider:
   name: aws
   runtime: nodejs18.x
-  memorySize: 512
+  memorySize: 1024
   stage: staging
-  timeout: 30
+  timeout: 15
   region: ap-south-1
 
 resources:
