@@ -33,7 +33,7 @@ exports.up = function (knex) {
       table.string("last_name");
       table.string("email");
       table.string("password");
-      table.timestamp("update_at").defaultTo(knex.fn.now());
+      table.timestamp("updated_at").defaultTo(knex.fn.now());
       table.timestamp("created_at").defaultTo(knex.fn.now());
       table.boolean("is_deleted").defaultTo(false);
       table.timestamp("deleted_at");
@@ -42,7 +42,7 @@ exports.up = function (knex) {
       table.increments("id").primary();
       table.string("name");
       table.string("address");
-      table.timestamp("update_at").defaultTo(knex.fn.now());
+      table.timestamp("updated_at").defaultTo(knex.fn.now());
       table.timestamp("created_at").defaultTo(knex.fn.now());
       table.boolean("is_deleted").defaultTo(false);
       table.timestamp("deleted_at");
@@ -63,7 +63,7 @@ exports.up = function (knex) {
       table.increments("id").primary();
       table.integer("fk_home_id").unsigned().references("id").inTable("home");
       table.string("name");
-      table.timestamp("update_at").defaultTo(knex.fn.now());
+      table.timestamp("updated_at").defaultTo(knex.fn.now());
       table.timestamp("created_at").defaultTo(knex.fn.now());
       table.boolean("is_deleted").defaultTo(false);
       table.timestamp("deleted_at");
@@ -92,6 +92,7 @@ exports.up = function (knex) {
     .createTable("switch", function (table) {
       table.increments("id").primary();
       table.integer("fk_room_id").unsigned().references("id").inTable("room");
+      table.string("name");
       table.string("type");
       table
         .string("switch_serial_id")
@@ -100,7 +101,7 @@ exports.up = function (knex) {
       table.string("state");
       table.boolean("is_favorite");
       table.integer("power_value_percentage");
-      table.timestamp("update_at").defaultTo(knex.fn.now());
+      table.timestamp("updated_at").defaultTo(knex.fn.now());
       table.timestamp("created_at").defaultTo(knex.fn.now());
       table.boolean("is_deleted").defaultTo(false);
       table.timestamp("deleted_at");
@@ -133,9 +134,9 @@ exports.up = function (knex) {
 exports.down = function (knex) {
   return knex.schema
     .dropTableIfExists("switch_state_logs")
-    .dropTableIfExists("microcontroller_hardware")
-    .dropTableIfExists("switch_hardware")
     .dropTableIfExists("switch")
+    .dropTableIfExists("switch_hardware")
+    .dropTableIfExists("microcontroller_hardware")
     .dropTableIfExists("room")
     .dropTableIfExists("user_home_map")
     .dropTableIfExists("home")

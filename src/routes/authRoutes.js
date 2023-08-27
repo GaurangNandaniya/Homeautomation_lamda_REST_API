@@ -14,7 +14,11 @@ router.post("/signup", validateUser, async (req, res) => {
   try {
     const { userDetails } = req.body;
     const { email, password, firstName, lastName } = userDetails;
+    const user = await getUserByEmail(email);
 
+    if (!_.isEmpty(user)) {
+      return res.json({ success: false, message: "User already exist!" });
+    }
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = {
       email,

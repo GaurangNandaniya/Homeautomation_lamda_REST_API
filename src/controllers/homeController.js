@@ -5,11 +5,13 @@ const {
   restoreHomeModal,
   fetchHomeByUserId,
 } = require("../models/Home");
+const { addUserHomeMap } = require("../controllers/UserHomeMapController");
 
 const homeProperties = ["name", "id", "address"];
 
 const createNewHome = async (data) => {
   const result = await createHome(data);
+  await addUserHomeMap({ ...data, homeDetails: result });
   return _.pick(result || {}, homeProperties);
 };
 

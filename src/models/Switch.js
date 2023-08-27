@@ -25,12 +25,13 @@ const createSwitches = async (data) => {
 
 const updateSwitch = async (data) => {
   const { jwtUser, switchDetails } = data;
-  const { id, name } = switchDetails;
+  const { id, name, isFavorite } = switchDetails;
 
   const result = await db("switch")
     .update({
       name,
       updated_at: db.fn.now(),
+      is_favorite: isFavorite,
     })
     .where({
       id,

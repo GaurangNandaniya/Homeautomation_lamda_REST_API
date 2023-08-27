@@ -5,7 +5,6 @@ const createHome = async (data) => {
 
   const result = await db("home")
     .insert({
-      fk_user_id: userId,
       name,
       address,
       updated_at: db.fn.now(),
@@ -29,7 +28,6 @@ const updateHome = async (data) => {
     })
     .where({
       id,
-      fk_user_id: userId,
       is_deleted: false,
     })
     .returning("*");
@@ -45,7 +43,6 @@ const deleteHome = async (data) => {
   const result = await db("home")
     .where("id", id)
     .where("is_deleted", false)
-    .where("fk_user_id", userId)
     .update({
       is_deleted: true,
       deleted_at: db.fn.now(),
@@ -75,17 +72,32 @@ const fetchHomeByUserId = async (data) => {
   const { jwtUser } = data;
   const { userId } = jwtUser;
 
-  const result = await db("home as h")
-    .select("h.id", "h.name", "h.address", db.raw("COUNT(r.id) as room_count"))
+  const query = db("user as u")
+    .count("r.id as room_count")
+    .select("h.id", "h.name", "h.address")
+    .innerJoin("user_home_map as uhm", function () {
+      this.on("u.user_id", "=", "uhm.fk_user_id")
+        .andOn("u.is_deleted", "=", db.raw("?", [false]))
+        .andOn("uhm.is_deleted", "=", db.raw("?", [false]));
+    })
+    .innerJoin("home as h", function () {
+      this.on("h.id", "=", "uhm.fk_home_id").andOn(
+        "h.is_deleted",
+        "=",
+        db.raw("?", [false])
+      );
+    })
     .leftJoin("room as r", function () {
-      this.on("r.fk_home_id", "h.id").on("r.is_deleted", db.raw("?", [false]));
+      this.on("h.id", "=", "r.fk_home_id").andOn(
+        "r.is_deleted",
+        "=",
+        db.raw("?", [false])
+      );
     })
-    .where({
-      "h.is_deleted": false,
-      "h.fk_user_id": userId,
-    })
+    .where("u.user_id", userId)
     .groupBy("h.id");
 
+  const result = await query;
   return result;
 };
 
