@@ -72,7 +72,7 @@ const updateSwitchState = async (data) => {
   });
 
   const promise = [];
-  promise.push(updateSwitchStateInDb(data));
+  promise.push(updateSwitch({ ...data, shouldUpdateUpdatedAt: false }));
   promise.push(addSwitchStateUpdateLog(data));
 
   await Promise.all(promise);

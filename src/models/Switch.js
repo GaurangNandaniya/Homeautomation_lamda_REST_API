@@ -24,14 +24,14 @@ const createSwitches = async (data) => {
 };
 
 const updateSwitch = async (data) => {
-  const { jwtUser, switchDetails } = data;
-  const { id, name, isFavorite } = switchDetails;
+  const { jwtUser, switchDetails, shouldUpdateUpdatedAt = true } = data;
+  const { id, name, state } = switchDetails;
 
   const result = await db("switch")
     .update({
       name,
-      updated_at: db.fn.now(),
-      is_favorite: isFavorite,
+      state,
+      updated_at: shouldUpdateUpdatedAt ? db.fn.now() : undefined,
     })
     .where({
       id,
@@ -103,23 +103,6 @@ const fetchSwitchHardwareDetailsBySwitchId = async (data) => {
   return result;
 };
 
-const updateSwitchStateInDb = async (data) => {
-  const { jwtUser, switchDetails } = data;
-  const { id, state } = switchDetails;
-
-  const result = await db("switch")
-    .update({
-      state,
-    })
-    .where({
-      id,
-      is_deleted: false,
-    })
-    .returning("*");
-
-  return _.first(result);
-};
-
 module.exports = {
   createSwitches,
   updateSwitch,
@@ -127,5 +110,4 @@ module.exports = {
   restoreSwichModal,
   fetchSwitchesByRoomId,
   fetchSwitchHardwareDetailsBySwitchId,
-  updateSwitchStateInDb,
 };
