@@ -36,7 +36,7 @@ router.post("/signup", validateUser, async (req, res) => {
 router.post("/login", validateUser, async (req, res) => {
   try {
     const { userDetails } = req.body;
-    const { email, password } = userDetails;
+    const { email, password, isGoogleAuth } = userDetails;
 
     const user = await getUserByEmail(email);
     if (!user) {
@@ -44,7 +44,7 @@ router.post("/login", validateUser, async (req, res) => {
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
+    if (!isPasswordValid && !isGoogleAuth) {
       return res.status(401).json({ error: "Invalid credentials" });
     }
 

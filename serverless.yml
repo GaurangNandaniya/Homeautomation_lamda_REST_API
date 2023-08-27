@@ -8,6 +8,13 @@ useDotenv: true
 plugins:
   - serverless-offline
 
+#https://stackoverflow.com/questions/63809224/multiple-serverless-process-on-different-ports
+custom:
+  serverless-offline:
+    httpPort: 4000
+    websocketPort: 4001
+    lambdaPort: 4002
+
 provider:
   name: aws
   runtime: nodejs18.x

@@ -6,6 +6,7 @@ const { getUserByEmail } = require("../controllers/userController");
 function validateUser(req, res, next) {
   const { userDetails } = req.body;
   const { email, password } = userDetails;
+  console.log({ apiRoute: req.originalUrl });
 
   if (!email || !password) {
     return res.status(400).json({ error: "Email and password are required" });
