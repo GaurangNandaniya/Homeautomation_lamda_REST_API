@@ -21,7 +21,6 @@ const switchProperties = [
   "type",
   "state",
   "power_value_percentage",
-  "is_favorite",
 ];
 
 const createNewSwitches = async (data) => {

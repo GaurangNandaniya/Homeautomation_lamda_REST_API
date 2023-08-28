@@ -8,6 +8,7 @@ const {
 const {
   addUserFavoriteEntity,
   removeUserFavoriteEntityMap,
+  getUserFavoriteEntityMapByUserId,
 } = require("../controllers/userFavoriteEntityMapController");
 const router = express.Router();
 
@@ -54,6 +55,22 @@ router.post("/remove-favorite-entity", authenticateUser, async (req, res) => {
       jwtUser,
     });
     res.json({ success: true, message: "Removed favorite item" });
+  } catch (error) {
+    console.error("Error in user route:", error);
+    res.status(500).json({ success: false, error: "Internal server error" });
+  }
+});
+
+router.post("/get-favorite-entity", authenticateUser, async (req, res) => {
+  try {
+    const { favoriteEntityDetails } = req.body;
+    const jwtUser = res.locals.jwtUser;
+
+    const data = await getUserFavoriteEntityMapByUserId({
+      favoriteEntityDetails,
+      jwtUser,
+    });
+    res.json({ success: true, data });
   } catch (error) {
     console.error("Error in user route:", error);
     res.status(500).json({ success: false, error: "Internal server error" });

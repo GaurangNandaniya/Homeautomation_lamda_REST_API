@@ -33,7 +33,43 @@ const deleteUserFavoriteEntityMap = async (data) => {
   return _.first(result);
 };
 
+const getUserFavoriteSwitchesByUserId = async (data) => {
+  const { favoriteEntityDetails, jwtUser } = data;
+  const { userId } = jwtUser;
+
+  const query = db("user_favorite_entity_map as ufem")
+    .select(
+      "s.id",
+      "s.name as switch_name",
+      "s.state",
+      "r.name as room_name",
+      "h.name as home_name"
+    )
+    .innerJoin("switch as s", function () {
+      this.on("ufem.entity_id", "=", "s.id")
+        .andOn("ufem.entity_type", "=", db.raw("?", ["SWITCH"]))
+        .andOn("ufem.is_deleted", "=", db.raw("?", [false]))
+        .andOn("ufem.fk_user_id", "=", userId);
+    })
+    .innerJoin("room as r", function () {
+      this.on("s.fk_room_id", "=", "r.id").andOn(
+        "r.is_deleted",
+        "=",
+        db.raw("?", [false])
+      );
+    })
+    .innerJoin("home as h", function () {
+      this.on("h.id", "=", "r.fk_home_id").andOn(
+        "h.is_deleted",
+        "=",
+        db.raw("?", [false])
+      );
+    });
+  return await query;
+};
+
 module.exports = {
   createUserFavoriteEntityMap,
   deleteUserFavoriteEntityMap,
+  getUserFavoriteSwitchesByUserId,
 };
