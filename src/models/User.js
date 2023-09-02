@@ -22,6 +22,15 @@ async function fetchUserByEmail(email) {
     .first();
 }
 
+async function fetchUserById(data) {
+  const { jwtUser } = data;
+  const { userId } = jwtUser;
+  return await db("user")
+    .where("user_id", userId)
+    .where("is_deleted", false)
+    .first();
+}
+
 const updateUser = async (data) => {
   const { firstName, lastName, userId } = data;
 
@@ -70,6 +79,7 @@ const restoreUserModal = async (data) => {
 module.exports = {
   createUser,
   fetchUserByEmail,
+  fetchUserById,
   updateUser,
   deleteUser,
   restoreUserModal,
