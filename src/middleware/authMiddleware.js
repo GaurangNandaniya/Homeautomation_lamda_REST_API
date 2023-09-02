@@ -16,9 +16,8 @@ function validateUser(req, res, next) {
 }
 
 async function authenticateUser(req, res, next) {
-  const token = req.headers.authorization.split(" ")[1];
-
   try {
+    const token = _.split(_.get(req, "headers.authorization", ""), " ")[1];
     const decoded = jwt.verify(token, SECRET_KEY);
     const user = await getUserByEmail(decoded.email);
 
