@@ -10,10 +10,14 @@ const {
 const { publishMessage } = require("../controllers/awsIotController");
 const {
   getSwitchesByMicrocontrollerId,
+  updateSwitchHardwareBySerialIds,
 } = require("../controllers/switchHardwareController");
 const {
   addSwitchStateUpdateLog,
 } = require("../controllers/switchStateLogController");
+const {
+  updateMicrocontrollerHardwareByIds,
+} = require("./microcontrollerHardwareController");
 
 const switchProperties = [
   "name",
@@ -31,11 +35,30 @@ const createNewSwitches = async (data) => {
     jwtUser,
     switchDetails: { microcontrollerId },
   });
+  if (_.isEmpty(microcontrollerSwitches)) {
+    throw new Error("No switches for given Microcontroller id");
+  }
 
   const result = await createSwitches({
     jwtUser,
     switchDetails,
     microcontrollerSwitches,
+  });
+
+  await updateSwitchHardwareBySerialIds({
+    jwtUser,
+    switchHardwareSerialIds: _.map(microcontrollerSwitches, "serial_id"),
+    updateData: {
+      is_registered: true,
+    },
+  });
+
+  await updateMicrocontrollerHardwareByIds({
+    jwtUser,
+    microcontrollerIds: [microcontrollerId],
+    updateData: {
+      is_registered: true,
+    },
   });
 
   return _.map(result, (item) => _.pick(item || {}, switchProperties));

@@ -21,6 +21,12 @@ router.post("/create", authenticateUser, async (req, res) => {
     res.json({ success: true, data });
   } catch (error) {
     console.error("Error ceate switch:", error);
+    if (_.includes(error.message, "No switches for given Microcontroller id")) {
+      return res.status(500).json({
+        success: false,
+        error: "No switches for given Microcontroller id",
+      });
+    }
     res.status(500).json({ success: false, error: "Internal server error" });
   }
 });
