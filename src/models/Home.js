@@ -75,6 +75,7 @@ const fetchHomeByUserId = async (data) => {
   const query = db("user as u")
     .count("r.id as room_count")
     .select("h.id", "h.name", "h.address")
+    .select(db.raw("MIN(uhm.display_sequence) as display_sequence"))
     .innerJoin("user_home_map as uhm", function () {
       this.on("u.user_id", "=", "uhm.fk_user_id")
         .andOn("u.is_deleted", "=", db.raw("?", [false]))
@@ -95,7 +96,8 @@ const fetchHomeByUserId = async (data) => {
       );
     })
     .where("u.user_id", userId)
-    .groupBy("h.id");
+    .groupBy("h.id")
+    .orderBy("display_sequence", "asc");
 
   const result = await query;
   return result;

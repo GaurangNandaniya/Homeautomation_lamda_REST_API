@@ -71,6 +71,7 @@ const fetchRoomByHomeId = async (data) => {
 
   const result = await db("room as r")
     .select("r.id", "r.name", db.raw("COUNT(s.id) as switch_count"))
+    .select(db.raw("MIN(r.display_sequence) as display_sequence"))
     .leftJoin("switch as s", function () {
       this.on("s.fk_room_id", "r.id").on("s.is_deleted", db.raw("?", [false]));
     })
@@ -78,7 +79,8 @@ const fetchRoomByHomeId = async (data) => {
       "r.is_deleted": false,
       "r.fk_home_id": homeId,
     })
-    .groupBy("r.id");
+    .groupBy("r.id")
+    .orderBy("display_sequence", "asc");
 
   return result;
 };
