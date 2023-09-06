@@ -11,7 +11,7 @@ async function createUser(newUser) {
       created_at: db.fn.now(),
     })
     .returning("*");
-  console.log(result);
+
   return result;
 }
 

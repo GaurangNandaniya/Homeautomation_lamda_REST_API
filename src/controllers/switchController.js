@@ -85,8 +85,6 @@ const removeSwitch = async (data) => {
     switchDetails,
   });
 
-  console.log(switchesResult, fk_microcontroller_id);
-
   if (_.size(switchesResult) == 0) {
     await updateMicrocontrollerHardwareByIds({
       jwtUser,

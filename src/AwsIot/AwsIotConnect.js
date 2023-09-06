@@ -17,7 +17,7 @@ const publishMessage = async ({ payload, client }) => {
 
     //https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/iot-data-plane/command/PublishCommand/
     const command = new PublishCommand(params);
-    console.log(command);
+
     try {
       await client.send(command);
       console.log(
