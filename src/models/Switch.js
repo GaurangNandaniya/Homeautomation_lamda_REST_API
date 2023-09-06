@@ -84,8 +84,8 @@ const fetchSwitchesByRoomId = async (data) => {
     .where({
       "s.is_deleted": false,
       "s.fk_room_id": roomId,
-    });
-  // .orderBy("s.created_at", "ASC");
+    })
+    .orderBy("s.display_sequence", "asc");
 
   return result;
 };
