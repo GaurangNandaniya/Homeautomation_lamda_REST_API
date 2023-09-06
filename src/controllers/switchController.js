@@ -6,6 +6,7 @@ const {
   fetchSwitchesByRoomId,
   fetchSwitchHardwareDetailsBySwitchId,
   updateSwitchStateInDb,
+  fetchSwitchesOfMicrocontrollerBySwitchId,
 } = require("../models/Switch");
 const { publishMessage } = require("../controllers/awsIotController");
 const {
@@ -70,7 +71,30 @@ const updateSwitchDetails = async (data) => {
 };
 
 const removeSwitch = async (data) => {
-  return await deleteSwitch(data);
+  const { jwtUser, switchDetails } = data;
+  const result = await deleteSwitch(data);
+
+  const { fk_microcontroller_id } = await updateSwitchHardwareBySerialIds({
+    jwtUser,
+    switchHardwareSerialIds: [result.switch_serial_id],
+    updateData: { is_registered: false },
+  });
+
+  const switchesResult = await getSwitchesOfMicrocontrollerBySwitchId({
+    jwtUser,
+    switchDetails,
+  });
+
+  console.log(switchesResult, fk_microcontroller_id);
+
+  if (_.size(switchesResult) == 0) {
+    await updateMicrocontrollerHardwareByIds({
+      jwtUser,
+      microcontrollerIds: [fk_microcontroller_id],
+      updateData: { is_registered: false },
+    });
+  }
+  return result;
 };
 
 const restoreSwitch = async (data) => {
@@ -98,6 +122,10 @@ const updateSwitchState = async (data) => {
   promise.push(addSwitchStateUpdateLog(data));
 
   await Promise.all(promise);
+};
+
+const getSwitchesOfMicrocontrollerBySwitchId = async (data) => {
+  return await fetchSwitchesOfMicrocontrollerBySwitchId(data);
 };
 
 module.exports = {

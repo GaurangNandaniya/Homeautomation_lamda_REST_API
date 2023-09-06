@@ -55,7 +55,7 @@ const deleteSwitch = async (data) => {
     })
     .returning("*");
 
-  return result;
+  return _.first(result);
 };
 
 const restoreSwichModal = async (data) => {
@@ -70,7 +70,7 @@ const restoreSwichModal = async (data) => {
       is_deleted: false,
     })
     .returning("*");
-  console.log(result);
+
   return result;
 };
 
@@ -103,6 +103,35 @@ const fetchSwitchHardwareDetailsBySwitchId = async (data) => {
   return result;
 };
 
+const fetchSwitchesOfMicrocontrollerBySwitchId = async (data) => {
+  const { jwtUser, switchDetails } = data;
+  const { id } = switchDetails;
+  const { userId } = jwtUser;
+
+  const query = db("switch as s")
+    .select("s2.*")
+    .innerJoin("switch_hardware as sh1", function () {
+      this.on("s.switch_serial_id", "=", "sh1.serial_id").andOn(
+        "s.id",
+        "=",
+        db.raw("?", [id])
+      );
+    })
+    .innerJoin(
+      "switch_hardware as sh2",
+      "sh2.fk_microcontroller_id",
+      "sh1.fk_microcontroller_id"
+    )
+    .innerJoin("switch as s2", function () {
+      this.on("s2.switch_serial_id", "=", "sh2.serial_id").andOn(
+        "s2.is_deleted",
+        "=",
+        db.raw("?", [false])
+      );
+    });
+  return await query;
+};
+
 module.exports = {
   createSwitches,
   updateSwitch,
@@ -110,4 +139,5 @@ module.exports = {
   restoreSwichModal,
   fetchSwitchesByRoomId,
   fetchSwitchHardwareDetailsBySwitchId,
+  fetchSwitchesOfMicrocontrollerBySwitchId,
 };

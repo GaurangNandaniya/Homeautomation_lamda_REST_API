@@ -18,11 +18,14 @@ const updateSwitchHardwareDataBySerialIds = async (data) => {
     registered_at: _.isNil(is_registered) ? undefined : db.fn.now(),
   };
 
-  const result = await db("switch_hardware as sh")
+  const query = db("switch_hardware as sh")
     .update(updateObj)
-    .whereIn("sh.serial_id", switchHardwareSerialIds);
+    .whereIn("sh.serial_id", switchHardwareSerialIds)
+    .returning("*");
 
-  return result;
+  const result = await query;
+
+  return _.first(result);
 };
 
 module.exports = {

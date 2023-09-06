@@ -9,8 +9,7 @@ const updateMicrocontrollerHardwareDataByIds = async (data) => {
 
   const result = await db("microcontroller_hardware as mh")
     .update(updateObj)
-    .whereIn("mh.id", microcontrollerIds)
-    .where("mh.is_registered", false);
+    .whereIn("mh.id", microcontrollerIds);
 
   return result;
 };

@@ -59,19 +59,19 @@ router.post("/remove", authenticateUser, async (req, res) => {
   }
 });
 
-router.post("/restore", authenticateUser, async (req, res) => {
-  try {
-    const { switchDetails } = req.body;
-    const jwtUser = res.locals.jwtUser;
+// router.post("/restore", authenticateUser, async (req, res) => {
+//   try {
+//     const { switchDetails } = req.body;
+//     const jwtUser = res.locals.jwtUser;
 
-    await restoreSwitch({ jwtUser, switchDetails });
+//     await restoreSwitch({ jwtUser, switchDetails });
 
-    res.json({ success: true });
-  } catch (error) {
-    console.error("Error restore switch:", error);
-    res.status(500).json({ success: false, error: "Internal server error" });
-  }
-});
+//     res.json({ success: true });
+//   } catch (error) {
+//     console.error("Error restore switch:", error);
+//     res.status(500).json({ success: false, error: "Internal server error" });
+//   }
+// });
 
 router.post("/roomSwitches", authenticateUser, async (req, res) => {
   try {
