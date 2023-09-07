@@ -49,6 +49,7 @@ const getUserFavoriteSwitchesByUserId = async (data) => {
       this.on("ufem.entity_id", "=", "s.id")
         .andOn("ufem.entity_type", "=", db.raw("?", ["SWITCH"]))
         .andOn("ufem.is_deleted", "=", db.raw("?", [false]))
+        .andOn("s.is_deleted", "=", db.raw("?", [false]))
         .andOn("ufem.fk_user_id", "=", userId);
     })
     .innerJoin("room as r", function () {
