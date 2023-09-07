@@ -64,7 +64,9 @@ const getUserFavoriteSwitchesByUserId = async (data) => {
         "=",
         db.raw("?", [false])
       );
-    });
+    })
+    .orderBy("s.display_sequence", "asc");
+
   return await query;
 };
 
