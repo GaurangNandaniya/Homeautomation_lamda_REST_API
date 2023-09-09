@@ -1,6 +1,6 @@
 const createRoom = async (data) => {
   const { jwtUser, roomDetails } = data;
-  const { name, address, homeId } = roomDetails;
+  const { name, homeId, display_sequence } = roomDetails;
 
   const result = await db("room")
     .insert({
@@ -8,6 +8,7 @@ const createRoom = async (data) => {
       name,
       updated_at: db.fn.now(),
       created_at: db.fn.now(),
+      display_sequence,
     })
     .returning("*");
 

@@ -14,6 +14,7 @@ const createSwitches = async (data) => {
         state: "OFF",
         updated_at: db.fn.now(),
         created_at: db.fn.now(),
+        display_sequence: index + 1,
       };
     }
   );

@@ -9,7 +9,15 @@ const {
 const roomProperties = ["name", "id"];
 
 const createNewRoom = async (data) => {
-  const result = await createRoom(data);
+  const lastRoom = _.last(await getRoomByHomeId(data));
+
+  const result = await createRoom({
+    ...data,
+    roomDetails: {
+      ...data.roomDetails,
+      display_sequence: _.get(lastRoom, "display_sequence", 1) || 1,
+    },
+  });
   return _.pick(result || {}, roomProperties);
 };
 
