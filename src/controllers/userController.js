@@ -34,4 +34,5 @@ module.exports = {
   updateUserDetails,
   removeUser,
   restoreUser,
+  userProperties,
 };

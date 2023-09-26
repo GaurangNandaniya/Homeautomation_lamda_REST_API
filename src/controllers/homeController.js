@@ -8,8 +8,9 @@ const {
 const {
   addUserHomeMap,
   getUserHomeMapByHomeAndUserId,
+  userHomeMapProperties,
 } = require("../controllers/UserHomeMapController");
-const { getUserByEmail } = require("./userController");
+const { getUserByEmail, userProperties } = require("./userController");
 
 const homeProperties = ["name", "id", "address"];
 
@@ -52,7 +53,7 @@ const createUserHomeMapWithRole = async (data) => {
       user_role_expire_at: expireAt,
     },
   });
-  return result;
+  return _.pick(result, userHomeMapProperties);
 };
 
 const checkUserHomeAvailibility = async (data) => {
@@ -73,7 +74,7 @@ const checkUserHomeAvailibility = async (data) => {
   if (!_.isEmpty(userHomeMap)) {
     throw new Error("User already exist in the home");
   }
-  return user;
+  return _.pick(user, userProperties);
 };
 
 const updateHomeDetails = async (data) => {
