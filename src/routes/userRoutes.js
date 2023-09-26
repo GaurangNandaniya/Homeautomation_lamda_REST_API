@@ -5,6 +5,7 @@ const {
   removeUser,
   restoreUser,
   getUserById,
+  getUserByEmail,
 } = require("../controllers/userController");
 const {
   addUserFavoriteEntity,
@@ -19,6 +20,19 @@ router.post("/userDetails", authenticateUser, async (req, res) => {
     const data = await getUserById({
       jwtUser,
     });
+    res.json({ success: true, data });
+  } catch (error) {
+    console.error("Error in user route:", error);
+    res.status(500).json({ success: false, error: "Internal server error" });
+  }
+});
+
+router.post("/user-details-by-email", authenticateUser, async (req, res) => {
+  try {
+    const jwtUser = res.locals.jwtUser;
+    const { userDetails } = req.body;
+    const { email } = userDetails;
+    const data = await getUserByEmail(email);
     res.json({ success: true, data });
   } catch (error) {
     console.error("Error in user route:", error);

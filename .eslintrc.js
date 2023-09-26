@@ -26,5 +26,6 @@ module.exports = {
   globals: {
     db: "readonly",
     _: "readonly",
+    process: "readonly",
   },
 };
