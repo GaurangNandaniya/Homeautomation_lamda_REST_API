@@ -1,6 +1,6 @@
 const createUserHomeMap = async (data) => {
   const { jwtUser, homeDetails } = data;
-  const { id } = homeDetails;
+  const { id, display_sequence } = homeDetails;
   const { userId } = jwtUser;
 
   const result = await db("user_home_map")
@@ -8,6 +8,7 @@ const createUserHomeMap = async (data) => {
       fk_user_id: userId,
       fk_home_id: id,
       created_at: db.fn.now(),
+      display_sequence,
     })
     .returning("*");
 

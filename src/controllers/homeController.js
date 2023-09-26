@@ -11,7 +11,11 @@ const homeProperties = ["name", "id", "address"];
 
 const createNewHome = async (data) => {
   const result = await createHome(data);
-  await addUserHomeMap({ ...data, homeDetails: result });
+  const userHomes = await fetchHomeByUserId(data);
+  await addUserHomeMap({
+    ...data,
+    homeDetails: { id: result.id, display_sequence: _.size(userHomes) + 1 },
+  });
   return _.pick(result || {}, homeProperties);
 };
 
