@@ -10,6 +10,7 @@ const {
   getUserHomeMapByHomeAndUserId,
   userHomeMapProperties,
   updateUserHomeMap,
+  removeUserHomeMap,
 } = require("../controllers/UserHomeMapController");
 const { getUserByEmail, userProperties } = require("./userController");
 
@@ -79,6 +80,22 @@ const updateUserHomeMapWithRole = async (data) => {
   return _.pick(result, userHomeMapProperties);
 };
 
+const removeUserHomeMapWithRole = async (data) => {
+  const { jwtUser, userHomeRoleDetails } = data;
+  const { id, role, homeId, expireAt } = userHomeRoleDetails;
+
+  const result = await removeUserHomeMap({
+    ...data,
+    userDetails: {
+      id,
+    },
+    homeDetails: {
+      id: homeId,
+    },
+  });
+  return _.pick(result, userHomeMapProperties);
+};
+
 const checkUserHomeAvailibility = async (data) => {
   const { jwtUser, userDetails, homeDetails } = data;
   const { email } = userDetails;
@@ -126,4 +143,5 @@ module.exports = {
   createUserHomeMapWithRole,
   checkUserHomeAvailibility,
   updateUserHomeMapWithRole,
+  removeUserHomeMapWithRole,
 };

@@ -38,9 +38,9 @@ const updateUserHomeMapDetails = async (data) => {
 };
 
 const deleteUserHomeMap = async (data) => {
-  const { jwtUser, homeDetails } = data;
+  const { jwtUser, homeDetails, userDetails } = data;
   const { id } = homeDetails;
-  const { userId } = jwtUser;
+  const { id: userId } = userDetails;
 
   const result = await db("user_home_map")
     .where("fk_user_id", userId)
