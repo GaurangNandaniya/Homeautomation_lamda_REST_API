@@ -8,6 +8,7 @@ const {
   getHomeByUserId,
   createUserHomeMapWithRole,
   checkUserHomeAvailibility,
+  updateUserHomeMapWithRole,
 } = require("../controllers/homeController");
 
 const router = express.Router();
@@ -95,6 +96,23 @@ router.post("/create-home-user-role", authenticateUser, async (req, res) => {
     res.json({ success: true, data });
   } catch (error) {
     console.error("Error ceate home user role:", error);
+    res.status(500).json({ success: false, error: "Internal server error" });
+  }
+});
+
+router.post("/update-home-user-role", authenticateUser, async (req, res) => {
+  try {
+    const { userHomeRoleDetails } = req.body;
+    const jwtUser = res.locals.jwtUser;
+
+    const data = await updateUserHomeMapWithRole({
+      jwtUser,
+      userHomeRoleDetails,
+    });
+
+    res.json({ success: true, data });
+  } catch (error) {
+    console.error("Error update home user role:", error);
     res.status(500).json({ success: false, error: "Internal server error" });
   }
 });

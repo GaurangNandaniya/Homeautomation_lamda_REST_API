@@ -9,6 +9,7 @@ const {
   addUserHomeMap,
   getUserHomeMapByHomeAndUserId,
   userHomeMapProperties,
+  updateUserHomeMap,
 } = require("../controllers/UserHomeMapController");
 const { getUserByEmail, userProperties } = require("./userController");
 
@@ -49,6 +50,28 @@ const createUserHomeMapWithRole = async (data) => {
     homeDetails: {
       id: homeId,
       display_sequence: _.size(userHomes) + 1,
+      user_role: role,
+      user_role_expire_at: expireAt,
+    },
+  });
+  return _.pick(result, userHomeMapProperties);
+};
+
+const updateUserHomeMapWithRole = async (data) => {
+  const { jwtUser, userHomeRoleDetails } = data;
+  const { id, role, homeId, expireAt } = userHomeRoleDetails;
+
+  if (!_.includes(["OWNER", "CO_OWNER", "GUEST"], role)) {
+    throw new Error("Requested role not found");
+  }
+
+  const result = await updateUserHomeMap({
+    ...data,
+    userDetails: {
+      id,
+    },
+    homeDetails: {
+      id: homeId,
       user_role: role,
       user_role_expire_at: expireAt,
     },
@@ -102,4 +125,5 @@ module.exports = {
   getHomeByUserId,
   createUserHomeMapWithRole,
   checkUserHomeAvailibility,
+  updateUserHomeMapWithRole,
 };

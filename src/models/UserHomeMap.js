@@ -15,6 +15,28 @@ const createUserHomeMap = async (data) => {
 
   return _.first(result);
 };
+
+const updateUserHomeMapDetails = async (data) => {
+  const { jwtUser, homeDetails, userDetails } = data;
+  const { id, display_sequence, user_role, user_role_expire_at } = homeDetails;
+
+  const result = await db("user_home_map")
+    .update({
+      updated_at: db.fn.now(),
+      display_sequence,
+      user_role,
+      user_role_expire_at,
+    })
+    .where({
+      fk_user_id: userDetails.id,
+      fk_home_id: id,
+      is_deleted: false,
+    })
+    .returning("*");
+
+  return _.first(result);
+};
+
 const deleteUserHomeMap = async (data) => {
   const { jwtUser, homeDetails } = data;
   const { id } = homeDetails;
@@ -48,4 +70,5 @@ module.exports = {
   createUserHomeMap,
   deleteUserHomeMap,
   fetchUserHomeMapByHomeAndUserId,
+  updateUserHomeMapDetails,
 };

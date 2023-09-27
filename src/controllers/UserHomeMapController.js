@@ -2,6 +2,7 @@ const {
   createUserHomeMap,
   deleteUserHomeMap,
   fetchUserHomeMapByHomeAndUserId,
+  updateUserHomeMapDetails,
 } = require("../models/UserHomeMap");
 
 const userHomeMapProperties = [
@@ -24,9 +25,14 @@ const getUserHomeMapByHomeAndUserId = async (data) => {
   return await fetchUserHomeMapByHomeAndUserId(data);
 };
 
+const updateUserHomeMap = async (data) => {
+  return await updateUserHomeMapDetails(data);
+};
+
 module.exports = {
   addUserHomeMap,
   removeUserHomeMap,
   getUserHomeMapByHomeAndUserId,
   userHomeMapProperties,
+  updateUserHomeMap,
 };
