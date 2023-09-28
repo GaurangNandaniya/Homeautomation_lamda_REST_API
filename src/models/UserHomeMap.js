@@ -66,9 +66,39 @@ const fetchUserHomeMapByHomeAndUserId = async (data) => {
   return result;
 };
 
+const fetchHomeUsersByHomeId = async (data) => {
+  const { jwtUser, homeDetails } = data;
+  const { id } = homeDetails;
+
+  const query = db
+    .select(
+      "u.user_id",
+      "uhm.user_role",
+      "uhm.user_role_expire_at",
+      "u.first_name",
+      "u.last_name",
+      "u.email"
+    )
+    .from("user_home_map as uhm")
+    .innerJoin("user as u", function () {
+      this.on("u.user_id", "=", "uhm.fk_user_id").andOn(
+        "uhm.is_deleted",
+        "=",
+        db.raw("?", [false])
+      );
+    })
+    .where({
+      "u.is_deleted": false,
+      "uhm.fk_home_id": id,
+    });
+
+  return await query;
+};
+
 module.exports = {
   createUserHomeMap,
   deleteUserHomeMap,
   fetchUserHomeMapByHomeAndUserId,
   updateUserHomeMapDetails,
+  fetchHomeUsersByHomeId,
 };
