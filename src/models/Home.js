@@ -72,10 +72,18 @@ const fetchHomeByUserId = async (data) => {
   const { jwtUser } = data;
   const { userId } = jwtUser;
 
+  const currentTimeInMilliseconds = Date.now();
+
   const query = db("user as u")
     .count("r.id as room_count")
     .select("h.id", "h.name", "h.address")
     .select(db.raw("MIN(uhm.display_sequence) as display_sequence"))
+    .select(
+      db.raw(
+        "COALESCE(MIN(CASE WHEN uhm.user_role IS NOT NULL THEN uhm.user_role END), '') as user_role"
+      )
+    )
+    .select(db.raw("MAX(uhm.user_role_expire_at) as user_role_expire_at"))
     .innerJoin("user_home_map as uhm", function () {
       this.on("u.user_id", "=", "uhm.fk_user_id")
         .andOn("u.is_deleted", "=", db.raw("?", [false]))
@@ -96,9 +104,14 @@ const fetchHomeByUserId = async (data) => {
       );
     })
     .where("u.user_id", userId)
+    .andWhere((builder) => {
+      builder
+        .where("uhm.user_role", "<>", "GUEST")
+        .orWhere("uhm.user_role_expire_at", ">", currentTimeInMilliseconds);
+    })
     .groupBy("h.id")
     .orderBy("display_sequence", "asc");
-
+  console.log(query.toString());
   const result = await query;
   return result;
 };
