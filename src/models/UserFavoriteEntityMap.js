@@ -37,6 +37,8 @@ const getUserFavoriteSwitchesByUserId = async (data) => {
   const { favoriteEntityDetails, jwtUser } = data;
   const { userId } = jwtUser;
 
+  const currentTimeInMilliseconds = Date.now();
+
   const query = db("user_favorite_entity_map as ufem")
     .select(
       "s.id",
@@ -65,6 +67,16 @@ const getUserFavoriteSwitchesByUserId = async (data) => {
         "=",
         db.raw("?", [false])
       );
+    })
+    .innerJoin("user_home_map as uhm", function () {
+      this.on("uhm.fk_user_id", "=", db.raw("?", [userId]))
+        .on("h.id", "=", "uhm.fk_home_id")
+        .andOn("uhm.is_deleted", "=", db.raw("?", [false]));
+    })
+    .where((builder) => {
+      builder
+        .where("uhm.user_role", "<>", "GUEST")
+        .orWhere("uhm.user_role_expire_at", ">", currentTimeInMilliseconds);
     })
     .orderBy("s.display_sequence", "asc");
 

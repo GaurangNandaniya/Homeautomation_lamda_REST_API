@@ -111,7 +111,7 @@ const fetchHomeByUserId = async (data) => {
     })
     .groupBy("h.id")
     .orderBy("display_sequence", "asc");
-  console.log(query.toString());
+
   const result = await query;
   return result;
 };
