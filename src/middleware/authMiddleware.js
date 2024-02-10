@@ -21,10 +21,7 @@ async function authenticateUser(req, res, next) {
     const decoded = jwt.verify(token, SECRET_KEY);
     const user = await getUserByEmail(decoded.email);
 
-    if (
-      !user &&
-      !_.includes(JSON.parse(process.env.ADMIN_USERS), decoded.email)
-    ) {
+    if (!user && !_.includes(JSON.parse(ADMIN_USERS), decoded.email)) {
       return res.status(401).json({ error: "Unauthorized" });
     }
 

@@ -8,3 +8,4 @@ jspm_packages
 .env
 test-api.http
 ap-south-1-bundle.pem
+src/constants/KnexConstants.js

@@ -12,7 +12,7 @@ const userRoutes = require("./src/routes/userRoutes");
 const homeRoutes = require("./src/routes/homeRoutes");
 const roomRoutes = require("./src/routes/roomRoutes");
 const switchRoutes = require("./src/routes/switchRoutes");
-const noAuthSwitchState = require("./src/routes/noAuthSwitchState");
+// const noAuthSwitchState = require("./src/routes/noAuthSwitchState");
 
 //it will make available db to all files without importing
 global.db = db;
@@ -33,6 +33,6 @@ app.use("/user", userRoutes);
 app.use("/home", homeRoutes);
 app.use("/room", roomRoutes);
 app.use("/switch", switchRoutes);
-app.use("/noauth", noAuthSwitchState);
+// app.use("/noauth", noAuthSwitchState);
 
 module.exports = app;
