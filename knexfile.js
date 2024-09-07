@@ -18,7 +18,7 @@ module.exports = {
       password: POSTGRESQL_DB_PASSWORD,
       port: 5432, // Default PostgreSQL port,
       ssl: {
-        ca: POSTGRESQL_DB_SSL,
+        rejectUnauthorized: false,
       },
     },
     migrations: {

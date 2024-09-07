@@ -68,4 +68,5 @@ functions:
       POSTGRESQL_DB_PASSWORD: ${env:POSTGRESQL_DB_PASSWORD}
       POSTGRESQL_DB: ${env:POSTGRESQL_DB}
       ADMIN_USERS: ${env:ADMIN_USERS}
+      ENDPOINT_ID: ${env:ENDPOINT_ID}
     role: MyLambdaExecutionRole # Reference the IAM role here
