@@ -12,7 +12,9 @@ const publishMessage = async ({ payload, client }) => {
     const params = {
       topic: getAWSIotPublishTopic(), // Replace with your IoT topic
       payload: JSON.stringify(switchInfo),
-      qos: 0,
+      // QoS 1: AWS IoT broker queues the message for the device's
+      // persistent session if it's briefly offline.
+      qos: 1,
     };
 
     //https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/iot-data-plane/command/PublishCommand/
