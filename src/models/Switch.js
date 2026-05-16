@@ -9,7 +9,7 @@ const createSwitches = async (data) => {
       return {
         fk_room_id: roomId,
         name: `Switch ${index + 1}`,
-        type: "SIMPLE",
+        type: "light",
         switch_serial_id: serial_id,
         state: "OFF",
         updated_at: db.fn.now(),
@@ -26,14 +26,18 @@ const createSwitches = async (data) => {
 
 const updateSwitch = async (data) => {
   const { jwtUser, switchDetails, shouldUpdateUpdatedAt = true } = data;
-  const { id, name, state } = switchDetails;
+  const { id, name, state, type } = switchDetails;
+
+  // Build update object — only set fields the caller provided so we don't
+  // wipe other columns to null/undefined.
+  const updates = {};
+  if (name !== undefined) updates.name = name;
+  if (state !== undefined) updates.state = state;
+  if (type !== undefined) updates.type = type;
+  if (shouldUpdateUpdatedAt) updates.updated_at = db.fn.now();
 
   const result = await db("switch")
-    .update({
-      name,
-      state,
-      updated_at: shouldUpdateUpdatedAt ? db.fn.now() : undefined,
-    })
+    .update(updates)
     .where({
       id,
       is_deleted: false,
