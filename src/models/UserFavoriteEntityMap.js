@@ -43,6 +43,7 @@ const getUserFavoriteSwitchesByUserId = async (data) => {
     .select(
       "s.id",
       "s.name as switch_name",
+      "s.type",
       "s.state",
       "r.name as room_name",
       "h.name as home_name"
